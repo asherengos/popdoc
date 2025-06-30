@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppLayout } from './components/AppLayout';
+import AppLayout from './components/AppLayout';
 import { LoadingScreen } from './components/LoadingScreen';
-import { CharacterSelection } from './components/CharacterSelection';
-import { ChatInterface } from './components/ChatInterface';
-import { Dashboard } from './components/Dashboard';
-import { Profile } from './components/Profile';
-import { AppointmentScheduler } from './components/AppointmentScheduler';
-import { MedicationManager } from './components/MedicationManager';
-import { Login } from './components/Auth/Login';
-import { UserPreferences } from './components/Settings/UserPreferences';
+import { CharacterGrid } from './components/CharacterSelection/CharacterGrid';
+import { Chat } from './components/Chat/Chat';
+import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
+import AppointmentScheduler from './components/AppointmentScheduler';
+import MedicationManager from './components/MedicationManager';
+import Login from './components/Auth/Login';
+import UserPreferences from './components/Settings/UserPreferences';
 import { SelectedDoctorProvider } from './context/SelectedDoctorContext';
 import { UserProvider } from './context/UserContext';
 import { doctors } from './data/doctors';
+import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -87,42 +88,24 @@ export const App: React.FC = () => {
 
             <Routes>
               <Route path="/" element={
-                <AppLayout>
-                  <CharacterSelection />
-                </AppLayout>
+                <div className="container mx-auto p-4 pt-12 text-center">
+                  <h1 className="text-4xl font-bold mb-2 text-cyan-400">Meet Your POPDOC</h1>
+                  <p className="text-lg text-gray-300 mb-8">Select a legendary doctor to begin your consultation.</p>
+                  <CharacterGrid />
+                </div>
               } />
-              <Route path="/chat" element={
-                <AppLayout>
-                  <ChatInterface />
-                </AppLayout>
-              } />
-              <Route path="/dashboard" element={
-                <AppLayout>
-                  <Dashboard />
-                </AppLayout>
-              } />
-              <Route path="/profile" element={
-                <AppLayout>
-                  <Profile />
-                </AppLayout>
-              } />
-              <Route path="/appointments" element={
-                <AppLayout>
-                  <AppointmentScheduler />
-                </AppLayout>
-              } />
-              <Route path="/medications" element={
-                <AppLayout>
-                  <MedicationManager />
-                </AppLayout>
-              } />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/app" element={<AppLayout />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="appointments" element={<AppointmentScheduler />} />
+                <Route path="medications" element={<MedicationManager />} />
+                <Route path="preferences" element={<UserPreferences />} />
+              </Route>
               <Route path="/login" element={<Login />} />
-              <Route path="/settings" element={
-                <AppLayout>
-                  <UserPreferences />
-                </AppLayout>
-              } />
             </Routes>
+            
+            <Footer />
           </div>
         </Router>
       </SelectedDoctorProvider>
