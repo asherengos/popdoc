@@ -1,0 +1,3 @@
+[33m3d327b9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: update lucide-react to v0.525.0 for React 19 compatibility and add legacy-peer-deps to netlify build
+[33m4233f18[m docs: sanitize API keys in deployment guide
+[33m7f67d77[m feat: add epic demo script and deployment guides for hackathon submission

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import { LoadingScreen } from './components/LoadingScreen';
 import { CharacterGrid } from './components/CharacterSelection/CharacterGrid';
@@ -14,6 +14,21 @@ import { SelectedDoctorProvider } from './context/SelectedDoctorContext';
 import { UserProvider } from './context/UserContext';
 import { doctors } from './data/doctors';
 import { Footer } from './components/Footer';
+
+const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="container mx-auto p-4 pt-12 text-center">
+      <h1 className="text-4xl font-bold mb-2 text-cyan-400">Meet Your POPDOC</h1>
+      <p className="text-lg text-gray-300 mb-8">Select a legendary doctor to begin your consultation.</p>
+      <CharacterGrid onDoctorSelected={(doctorId) => {
+        // Navigate to chat with selected doctor
+        navigate(`/chat?doctor=${doctorId}`);
+      }} />
+    </div>
+  );
+};
 
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -87,13 +102,7 @@ export const App: React.FC = () => {
             </div>
 
             <Routes>
-              <Route path="/" element={
-                <div className="container mx-auto p-4 pt-12 text-center">
-                  <h1 className="text-4xl font-bold mb-2 text-cyan-400">Meet Your POPDOC</h1>
-                  <p className="text-lg text-gray-300 mb-8">Select a legendary doctor to begin your consultation.</p>
-                  <CharacterGrid />
-                </div>
-              } />
+              <Route path="/" element={<HomePage />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/app" element={<AppLayout />}>
                 <Route path="dashboard" element={<Dashboard />} />

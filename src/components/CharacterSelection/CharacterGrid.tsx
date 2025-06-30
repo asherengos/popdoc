@@ -30,7 +30,8 @@ export const CharacterGrid: React.FC<{ onDoctorSelected: (doctorId: string) => v
           <CharacterCard
             key={doctor.id}
             doctor={doctor}
-            onSelect={() => handleSelect(doctor.id)}
+            isSelected={selectedDoctor === doctor.id}
+            onClick={() => handleSelect(doctor.id)}
           />
         ))}
       </div>
