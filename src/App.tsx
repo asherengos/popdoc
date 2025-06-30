@@ -1,124 +1,110 @@
-import * as React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { SelectedDoctorContext, SelectedDoctorProvider } from './context/SelectedDoctorContext';
-import { UserProvider, useUser } from './context/UserContext';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AppLayout from './components/AppLayout';
 import { LoadingScreen } from './components/LoadingScreen';
-
-// Components
-import Login from './components/Auth/Login';
 import { CharacterGrid } from './components/CharacterSelection/CharacterGrid';
 import { Chat } from './components/Chat/Chat';
-import AppLayout from './components/AppLayout';
 import Dashboard from './components/Dashboard';
-import MedicationManager from './components/MedicationManager';
-import AppointmentScheduler from './components/AppointmentScheduler';
 import Profile from './components/Profile';
+import AppointmentScheduler from './components/AppointmentScheduler';
+import MedicationManager from './components/MedicationManager';
+import Login from './components/Auth/Login';
 import UserPreferences from './components/Settings/UserPreferences';
-// import { Doctor } from './types/index'; // Commented out unused Doctor import
+import { SelectedDoctorProvider } from './context/SelectedDoctorContext';
+import { UserProvider } from './context/UserContext';
 import { doctors } from './data/doctors';
 import { Footer } from './components/Footer';
 
-// Simplified ProtectedRoute, primarily checking for user auth
-// Doctor selection is now handled by routing to /chat only after selection
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useUser();
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return <>{children}</>;
-};
-
-const CharacterSelectionPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { setSelectedDoctor } = React.useContext(SelectedDoctorContext);
-
-  return (
-    <div className="container mx-auto p-4 pt-12 text-center">
-      <h1 className="text-4xl font-bold mb-2 text-blue-600">Meet Your POPDOC</h1>
-      <p className="text-lg text-gray-700 mb-8">Select a legendary doctor to begin your consultation.</p>
-      <CharacterGrid
-        onDoctorSelected={(doctorId: string) => {
-          const doctor = doctors.find(d => d.id === doctorId);
-          if (doctor) {
-            setSelectedDoctor(doctor);
-            navigate('/chat');
-          } else {
-            // Handle case where doctorId might not be found (should not happen with current setup)
-            console.error(`Doctor with id ${doctorId} not found in doctors.ts`);
-            // Optionally, navigate to an error page or show a notification
-          }
-        }}
-      />
-    </div>
-  );
-};
-
 export const App: React.FC = () => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [doctorOfTheDay, setDoctorOfTheDay] = React.useState(doctors[Math.floor(Math.random() * doctors.length)]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [doctorOfTheDay, setDoctorOfTheDay] = useState(doctors[0]);
 
-  React.useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
+  useEffect(() => {
+    // Set doctor of the day based on current date
+    const today = new Date();
+    const dayIndex = today.getDate() % doctors.length;
+    setDoctorOfTheDay(doctors[dayIndex]);
   }, []);
 
-  if (isLoading) return <LoadingScreen />;
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
 
-  // The state for selectedDoctor is now managed by SelectedDoctorProvider
-  // No need for [selectedDoctor, setSelectedDoctor] = React.useState here
+  if (isLoading) {
+    return <LoadingScreen onComplete={handleLoadingComplete} />;
+  }
 
   return (
     <UserProvider>
       <SelectedDoctorProvider>
         <Router>
-          <div className="bg-gradient-to-b from-gray-900 to-blue-900 min-h-screen flex flex-col">
-            <header className="p-4 text-center">
-              <h1 className="text-4xl font-bold text-white animate-[glow_2s_infinite]">
-                POPDOC: Heroic Health
-              </h1>
-              <p className="text-blue-200">Chat with iconic doctors in Marvel Rivals style!</p>
-              <div
-                className="mt-4 p-4 bg-gray-800 rounded-lg shadow-[0_0_15px_rgba(0,255,255,0.3)] cursor-pointer inline-block"
-                onMouseEnter={() => new Audio('/assets/sounds/hover.mp3').play()}
-                tabIndex={0}
-                aria-label={`Doctor of the Day: Dr. ${doctorOfTheDay.name}`}
-              >
-                <h2 className="text-xl font-bold text-white">Doctor of the Day</h2>
-                <p className="text-blue-200">Meet Dr. {doctorOfTheDay.name}, {doctorOfTheDay.specialty}</p>
+          <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">
+            {/* LCARS Header Bar */}
+            <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2"></div>
+            
+            {/* Doctor of the Day Banner */}
+            <div 
+              className="bg-gradient-to-r from-gray-800 to-gray-700 p-4 border-b border-cyan-500/30"
+              role="banner"
+              aria-label="Doctor of the Day"
+            >
+              <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-400">
+                    <img 
+                      src={doctorOfTheDay.avatar} 
+                      alt={`Dr. ${doctorOfTheDay.name}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h2 
+                      className="text-cyan-400 text-lg font-bold tracking-wide"
+                      tabIndex={0}
+                      onMouseEnter={() => {
+                        const hoverSound = new Audio('/assets/sounds/hover.mp3');
+                        hoverSound.play().catch(() => {});
+                      }}
+                    >
+                      Doctor of the Day: Dr. {doctorOfTheDay.name}
+                    </h2>
+                    <p className="text-gray-300 text-sm font-mono">
+                      {doctorOfTheDay.specialty}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-cyan-400 text-right">
+                  <div className="text-sm font-mono">STARDATE</div>
+                  <div className="text-lg font-bold tabular-nums">
+                    {new Date().toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    }).replace(/\//g, '.')}
+                  </div>
+                </div>
               </div>
-            </header>
-            <main className="flex-1">
-              <Routes>
-                {/* Public route for login */}
-                <Route path="/login" element={<Login />} />
-                {/* Protected route for character selection - user must be logged in */}
-                <Route 
-                  path="/select-doctor" 
-                  element={ <ProtectedRoute><CharacterSelectionPage /></ProtectedRoute> }
-                />
-                {/* Protected route for chat - user must be logged in, doctor is from context */}
-                <Route 
-                  path="/chat" 
-                  element={ <ProtectedRoute><Chat /></ProtectedRoute> }
-                />
-                {/* Other protected app layout routes */}
-                <Route 
-                  path="/app" 
-                  element={ <ProtectedRoute><AppLayout /></ProtectedRoute> }
-                >
-                  <Route index element={<Navigate to="dashboard" replace />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="medications" element={<MedicationManager />} />
-                  <Route path="appointments" element={<AppointmentScheduler />} />
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="preferences" element={<UserPreferences />} />
-                </Route>
-                {/* Default redirect: if logged in, go to select-doctor, else to login */}
-                <Route 
-                  path="*" 
-                  element={ <Navigate to="/select-doctor" replace /> } // Or to /login if no user state yet from UserProvider
-                />
-              </Routes>
-            </main>
+            </div>
+
+            <Routes>
+              <Route path="/" element={
+                <div className="container mx-auto p-4 pt-12 text-center">
+                  <h1 className="text-4xl font-bold mb-2 text-cyan-400">Meet Your POPDOC</h1>
+                  <p className="text-lg text-gray-300 mb-8">Select a legendary doctor to begin your consultation.</p>
+                  <CharacterGrid />
+                </div>
+              } />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/app" element={<AppLayout />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="appointments" element={<AppointmentScheduler />} />
+                <Route path="medications" element={<MedicationManager />} />
+                <Route path="preferences" element={<UserPreferences />} />
+              </Route>
+              <Route path="/login" element={<Login />} />
+            </Routes>
+            
             <Footer />
           </div>
         </Router>
