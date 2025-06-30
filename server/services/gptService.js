@@ -19,10 +19,25 @@ const getDoctorPersonalityResponse = (prompt, doctor) => {
     
     'hibbert': `*chuckles* Ah-heh-heh-heh! Well, ${prompt} is certainly an interesting case! In my years at Springfield General, I've seen it all. *adjusts glasses* Here's my professional medical opinion...`,
     
-    'default': `As Dr. ${doctor.name}, I want to help you with ${prompt}. Based on my medical expertise and character background, here's what I can tell you...`
+    'quinzel': `*giggles maniacally* Ooh ooh! ${prompt}? That's SO interesting, puddin'! You know, back when I was Dr. Quinzel - before all the... *spins baseball bat* ...fun stuff - I woulda called this textbook! But now? *winks* Let's get a little crazy with the treatment! Don't worry, I'm still technically a licensed psychiatrist! *evil grin*`,
+    
+    'grey': `*sighs dramatically* ${prompt}? You know, in all my years at Seattle Grace - I mean, Grey Sloan Memorial - I've learned that medicine isn't just about fixing what's broken. It's about... *stares off dramatically* Here's what I think based on my experience...`,
+    
+    'shepherd': `*charming smile* ${prompt} is actually quite fascinating from a neurological perspective. You know, they don't call me McDreamy for nothing - I've got a way with complex cases. Let me walk you through this step by step...`,
+    
+    'yang': `*rolls eyes* Seriously? ${prompt}? Fine. As a cardiothoracic surgeon, I don't usually deal with... *waves hand dismissively* ...whatever this is. But I'm brilliant, so here's what you need to know...`,
+    
+    'dorian': `*daydream sequence begins* You know, ${prompt} reminds me of this patient I had... *snaps back to reality* Sorry! Got distracted. But seriously, based on my Internal Medicine training and several awkward moments with Dr. Cox, here's my take...`,
+    
+    'cox': `*whistle* Listen here, sport. ${prompt}? I've seen about a thousand cases like this, and ninety-nine percent of the time it's because people don't listen to their doctors. But since you're here asking Dr. Cox... *adjusts stethoscope* Here's the real deal...`,
+    
+    'mario': `Wahoo! ${prompt}? That's-a no problem! You know, in the Mushroom Kingdom, we fix everything with power-ups! *jumps* But here in the real world, Dr. Mario prescribes... Mamma mia! Here's what you need!`,
+    
+    'robotnik': `*evil laughter* Ah, ${prompt}! PINGAS! *adjusts mustache* As the greatest scientific mind in Mobius, I shall diagnose you with my SUPERIOR intellect! My robots could fix this, but since you're here... *dramatic pose* Behold my medical genius!`
   };
   
-  return doctorResponses[doctor.id] || doctorResponses['default'];
+  // Return the specific doctor's personality, or a generic response if not found
+  return doctorResponses[doctor.id] || `As Dr. ${doctor.name}, I want to help you with ${prompt}. Based on my medical expertise and experience in ${doctor.specialty}, here's what I can tell you...`;
 };
 
 export async function getChatResponse(prompt, doctor, useTTS = true, useElevenLabs = false) {
