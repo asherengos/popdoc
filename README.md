@@ -63,4 +63,4 @@ See `CONTRIBUTING.md` for how to join the POPDOC crew!
 - [ROADMAP.md](./ROADMAP.md): Planned features and development phases.
 - [DEVELOPMENT_GUIDELINES.md](./DEVELOPMENT_GUIDELINES.md): Coding standards and best practices.
 
-> "It ain't always easy, but I'm alright with the PJs." - Mac Miller 
+> "It ain't always easy, but I'm alright with the PJs." - Mac Miller   
