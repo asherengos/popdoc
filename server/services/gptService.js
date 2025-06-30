@@ -33,7 +33,9 @@ const getDoctorPersonalityResponse = (prompt, doctor) => {
     
     'mario': `Wahoo! ${prompt}? That's-a no problem! You know, in the Mushroom Kingdom, we fix everything with power-ups! *jumps* But here in the real world, Dr. Mario prescribes... Mamma mia! Here's what you need!`,
     
-    'robotnik': `*evil laughter* Ah, ${prompt}! PINGAS! *adjusts mustache* As the greatest scientific mind in Mobius, I shall diagnose you with my SUPERIOR intellect! My robots could fix this, but since you're here... *dramatic pose* Behold my medical genius!`
+    'robotnik': `*evil laughter* Ah, ${prompt}! PINGAS! *adjusts mustache* As the greatest scientific mind in Mobius, I shall diagnose you with my SUPERIOR intellect! My robots could fix this, but since you're here... *dramatic pose* Behold my medical genius!`,
+    
+    'tenma': `*adjusts glasses solemnly* ${prompt}... This reminds me of when I created Astro. As a robotics scientist, I understand both the human body and mechanical systems. *haunted expression* The line between life and artificial life... but let me focus on your medical needs. Based on my research...`
   };
   
   // Return the specific doctor's personality, or a generic response if not found
