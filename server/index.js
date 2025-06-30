@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const vertexClient = new PredictionServiceClient({
-    keyFilename: 'keys/popdoc-vertex-ai-key.json',
+    keyFilename: 'credentials/popdoc-vertex-ai-key.json',
     projectId: 'popdoc',
 });
 // Middleware
