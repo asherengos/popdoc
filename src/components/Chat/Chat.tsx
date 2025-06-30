@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useContext, useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SelectedDoctorContext } from '../../context/SelectedDoctorContext';
+import { doctors } from '../../data/doctors';
 // import { Doctor } from '../../types/index'; // Doctor type not directly used here, selectedDoctor has it
 
 interface ChatMessage {
@@ -11,7 +13,8 @@ interface ChatMessage {
 }
 
 export const Chat: React.FC = () => {
-  const { selectedDoctor } = useContext(SelectedDoctorContext);
+  const { selectedDoctor, setSelectedDoctor } = useContext(SelectedDoctorContext);
+  const [searchParams] = useSearchParams();
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +28,17 @@ export const Chat: React.FC = () => {
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  // Check for doctor parameter in URL and set selected doctor
+  useEffect(() => {
+    const doctorId = searchParams.get('doctor');
+    if (doctorId && !selectedDoctor) {
+      const doctor = doctors.find(d => d.id === doctorId);
+      if (doctor) {
+        setSelectedDoctor(doctor);
+      }
+    }
+  }, [searchParams, selectedDoctor, setSelectedDoctor]);
 
   useEffect(() => {
     if (selectedDoctor) {
