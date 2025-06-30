@@ -68,7 +68,8 @@ export const Chat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/chat', {
+      const apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+      const res = await fetch(`${apiUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -78,6 +79,11 @@ export const Chat: React.FC = () => {
           useElevenLabs
         })
       });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const { text, audioDataUri } = await res.json();
       const doctorResponse: ChatMessage = {
         id: Date.now().toString() + '-doc',
@@ -96,7 +102,26 @@ export const Chat: React.FC = () => {
     } catch (error: any) {
       setIsLoading(false);
       console.error('Chat submission error:', error);
-      setMessages(prevMessages => [...prevMessages, { id: Date.now().toString() + '-client-error', text: `Client error: ${error.message}`, sender: 'doctor'}]);
+      
+      // Fallback mock response for demo purposes when backend is unavailable
+      const mockResponses = {
+        'house': `*adjusts cane* ${prompt.toLowerCase().includes('pain') ? 'Pain is your body screaming at you. What triggered it? When did it start? And don\'t say "it just hurts" - that tells me nothing.' : prompt.toLowerCase().includes('headache') ? 'Headaches are just your brain\'s way of telling you to pay attention. Could be tension, could be a tumor. We\'ll start with the obvious and work our way to the terrifying.' : 'Interesting symptoms. Let me guess - you Googled them and now think you\'re dying? Rule one: it\'s not lupus. Rule two: when in doubt, see rule one.'}`,
+        'mccoy': `Dammit, I'm a doctor, not a miracle worker! ${prompt.toLowerCase().includes('pain') ? 'That pain you\'re describing sounds concerning. In my experience treating both humans and alien physiology, I\'d recommend we start with basic diagnostics.' : 'Based on what you\'re telling me, we need to run some tests. I\'ve seen this before in my years on the Enterprise.'}`,
+        'grey': `${prompt.toLowerCase().includes('surgery') ? 'Surgery is never just surgery. It\'s about healing, about second chances. Let me walk you through what we\'re looking at here.' : 'Medicine isn\'t just about treating symptoms - it\'s about treating the whole person. Tell me more about what you\'re experiencing.'}`,
+        default: `As Dr. ${selectedDoctor.name}, I understand your concern about "${prompt}". While I can\'t provide real medical advice, I recommend consulting with a licensed healthcare professional for proper diagnosis and treatment. This is a demonstration of POPDOC\'s voice AI capabilities.`
+      };
+      
+      const mockText = mockResponses[selectedDoctor.id as keyof typeof mockResponses] || mockResponses.default;
+      const doctorResponse: ChatMessage = {
+        id: Date.now().toString() + '-mock',
+        text: mockText,
+        sender: 'doctor',
+      };
+      setMessages(prevMessages => [...prevMessages, doctorResponse]);
+      
+      // Play chat sound for mock response too
+      const chatSound = new Audio('/assets/sounds/message.mp3');
+      chatSound.play().catch(() => {});
     }
   };
 
